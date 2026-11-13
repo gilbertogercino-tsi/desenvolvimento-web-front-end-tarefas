@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Contato, TipoContato } from '../contato';
 
 interface OpcoesSelect {
@@ -10,7 +11,7 @@ interface OpcoesSelect {
 @Component({
   selector: 'app-adiciona-contato',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './adiciona-contato.html',
   styleUrl: './adiciona-contato.scss'
 })
@@ -25,8 +26,29 @@ export class AdicionaContato {
 
   contatos: Contato[] = [];
 
-  adicionar(nome: string, telefone: string, email: string, aniversario: string, tipo: string) {
-  const novoContato = new Contato(nome, telefone, email, aniversario, tipo as TipoContato);
-  this.contatos.push(novoContato);
- }
+  formulario = new FormGroup({
+    nome: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    telefone: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    aniversario: new FormControl('', [Validators.required]),
+    tipo: new FormControl('Amigo(a)' as TipoContato, [Validators.required])
+  });
+
+  adicionar() {
+    if (this.formulario.valid) {
+      const valores = this.formulario.value;
+      const novoContato = new Contato(
+        valores.nome!,
+        valores.telefone!,
+        valores.email!,
+        valores.aniversario!,
+        valores.tipo as TipoContato
+      );
+      this.contatos.push(novoContato);
+      
+      this.formulario.reset({
+        tipo: 'Amigo(a)'
+      });
+    }
+  }
 }

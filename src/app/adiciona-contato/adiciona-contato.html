@@ -1,29 +1,55 @@
-<form>
-  <h2>Cadastro de Contato</h2>
+<form [formGroup]="formulario" (ngSubmit)="adicionar()">
+  <h2>Cadastro de Contato (Reactive Forms)</h2>
   
   <div>
     <label for="nome">Nome: </label>
-    <input type="text" id="nome" #nome>
+    <input type="text" id="nome" formControlName="nome">
+    @if (formulario.get('nome')?.invalid && formulario.get('nome')?.touched) {
+      <small style="color: red; display: block;">
+        @if (formulario.get('nome')?.hasError('required')) {
+          O campo nome é obrigatório.
+        }
+        @if (formulario.get('nome')?.hasError('minlength')) {
+          O nome deve ter pelo menos 3 caracteres.
+        }
+      </small>
+    }
   </div>
 
   <div>
     <label for="tel">Telefone: </label>
-    <input type="text" id="tel" #tel>
+    <input type="text" id="tel" formControlName="telefone">
+    @if (formulario.get('telefone')?.invalid && formulario.get('telefone')?.touched) {
+      <small style="color: red; display: block;">O telefone é obrigatório.</small>
+    }
   </div>
 
   <div>
     <label for="email">E-mail: </label>
-    <input type="email" id="email" #email>
+    <input type="email" id="email" formControlName="email">
+    @if (formulario.get('email')?.invalid && formulario.get('email')?.touched) {
+      <small style="color: red; display: block;">
+        @if (formulario.get('email')?.hasError('required')) {
+          O e-mail é obrigatório.
+        }
+        @if (formulario.get('email')?.hasError('email')) {
+          Digite um formato de e-mail válido.
+        }
+      </small>
+    }
   </div>
 
   <div>
     <label for="aniversario">Aniversário: </label>
-    <input type="date" id="aniversario" #aniversario>
+    <input type="date" id="aniversario" formControlName="aniversario">
+    @if (formulario.get('aniversario')?.invalid && formulario.get('aniversario')?.touched) {
+      <small style="color: red; display: block;">A data de aniversário é obrigatória.</small>
+    }
   </div>
 
   <div>
     <label for="tipo">Tipo: </label>
-    <select id="tipo" #tipoSelect>
+    <select id="tipo" formControlName="tipo">
       @for (item of SELECT_TIPO; track item.id) {
         <option [value]="item.value">{{ item.value }}</option>
       }
@@ -31,10 +57,10 @@
   </div>
 
   <div>
-    <button type="button" (click)="adicionar(nome.value, tel.value, email.value, aniversario.value, tipoSelect.value)">
-  Adicionar Contato
-</button>
-
+    <!-- Botão bloqueado caso o formulário esteja inválido -->
+    <button type="submit" [disabled]="formulario.invalid">
+      Adicionar Contato
+    </button>
   </div>
 </form>
 
